@@ -35,7 +35,7 @@ namespace Afx.Model
         public const string Image = "image";
 
         /// <summary>
-        /// Map is type that enables to expose stream interface for data distributed in a different locations.
+        /// Map is a type that enables to expose stream interface for data distributed in a different locations.
         /// </summary>
         public const string Map = "map";
 
@@ -50,7 +50,7 @@ namespace Afx.Model
         public const string Link = "link";
 
         /// <summary>
-        /// Identity is a type of objects that represents verifiable entity by X.509 certificate.
+        /// Identity is a type of objects that represents verifiable entity by X.509 certificate. 
         /// </summary>
         public const string Identity = "identity";
     }

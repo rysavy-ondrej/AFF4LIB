@@ -7,7 +7,7 @@ using Afx.Services;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-
+using JsonLD;
 namespace ResourceDirectory
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single,
@@ -31,10 +31,10 @@ namespace ResourceDirectory
 
         public bool RegisterObject(AfxObject obj)
         {
-            if (!m_resourceDictionary.TryGetValue(obj.Urn, out AfxObject rdf))
+            if (!m_resourceDictionary.TryGetValue(obj.Id, out AfxObject rdf))
             {
-                m_resourceDictionary.Add(obj.Urn, obj);
-                Console.WriteLine($"New object {obj.Urn} registered.");
+                m_resourceDictionary.Add(obj.Id, obj);
+                Console.WriteLine($"New object {obj.Id} registered.");
                 Console.WriteLine($"Total number of known objects is {m_resourceDictionary.Count}.");
                 return true;
             }
@@ -47,7 +47,7 @@ namespace ResourceDirectory
         {
             m_resourceDictionary.Add("urn:aff:1", new AfxObject
             {
-                Urn = "urn:aff:1",
+                Id = "urn:aff:1",
                 Attributes = new Dictionary<string, string>
                 {
                     [AfxAttributes.Type] = "image",

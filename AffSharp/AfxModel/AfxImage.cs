@@ -11,6 +11,21 @@ namespace Afx.Model
     /// </summary>
     public class AfxImage : AfxObject
     {
+        int SegmentSize
+        { get; set; }
+
+        int ChunksPerSegment
+        { get; set; }
+
+        string Compression
+        { get; set; }
+
+        int SegmentCount
+        { get; set; }
+
+        long Size
+        { get; set; }
+
 
     }
 }

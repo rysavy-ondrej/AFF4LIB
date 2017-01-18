@@ -18,7 +18,7 @@ namespace ResourceDirectory
         static void Main(string[] args)
         {
             ResourceDirectory resourceDirectory = new ResourceDirectory();
-            WebServiceHost _serviceHost = new WebServiceHost(resourceDirectory, new Uri("http://localhost:8465/AfxResourceDirectory"));
+            WebServiceHost _serviceHost = new WebServiceHost(resourceDirectory, new Uri("http://localhost:8465/afx/resourceDirectory"));
             _serviceHost.Open();
             Console.WriteLine("ResourceDirectory is running...");            
             PrintAPIInfo(_serviceHost);
