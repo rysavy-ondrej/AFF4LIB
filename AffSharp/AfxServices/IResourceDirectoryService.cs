@@ -26,7 +26,7 @@ namespace Afx.Services
         /// <returns>A string consisting of JSON representation of its RDF content.</returns>
         [OperationContract]
         [WebGet(UriTemplate = Routing.FindAffObject, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        AfxObject FindAffObject(string urn);
+        AfxObject FindObject(string urn);
 
 
 

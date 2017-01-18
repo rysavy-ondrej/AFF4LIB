@@ -25,7 +25,7 @@ A Uniform Resource Name (URN) is a Uniform Resource Identifier (URI) that uses t
 ```
 urn:afx:05d7e827
 ```
-While URN is useful for identification of resources, URL provides also localization. 
+While URN is useful for identification of resources, URL provides also localization.
 
 # Resource Directory Service
 A resource directory service serves for accessing information about known AFX objects.
@@ -43,7 +43,7 @@ public interface IResourceDirectoryService
         /// <returns>A string consisting of JSON representation of its RDF content.</returns>
         [OperationContract]
         [WebGet(UriTemplate = "/objects/{urn}", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        AfxObject FindAffObject(string urn);
+        AfxObject FindObject(string urn);
 
         [OperationContract]        
         [WebInvoke(Method="POST", UriTemplate = "/objects", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]

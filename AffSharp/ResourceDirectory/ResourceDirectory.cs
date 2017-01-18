@@ -17,7 +17,7 @@ namespace ResourceDirectory
         Dictionary<string, AfxObject> m_resourceDictionary = new Dictionary<string, AfxObject>();
 
 
-        public AfxObject FindAffObject(string urn)
+        public AfxObject FindObject(string urn)
         {
             if (m_resourceDictionary.TryGetValue(urn, out AfxObject rdf))
             {
