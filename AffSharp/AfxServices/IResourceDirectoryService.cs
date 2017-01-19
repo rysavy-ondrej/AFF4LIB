@@ -16,7 +16,7 @@ namespace Afx.Services
     /// <summary>
     /// This service defines operations to access ResourceDictionary API.
     /// </summary>
-    [ServiceContract(Name = "ResourceDirectoryService")]
+    [ServiceContract(Name = "ResourceDirectory")]
     public interface IResourceDirectoryService
     {
         /// <summary>

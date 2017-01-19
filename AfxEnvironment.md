@@ -33,44 +33,34 @@ A resource directory service serves for accessing information about known AFX ob
 The interface of the resource directory service is defined as follows:
 
 ```
-[ServiceContract(Name = "ResourceDirectoryService")]
 public interface IResourceDirectoryService
-    {
-        /// <summary>
-        /// Gets registered AFF Object and returns JSON representation of its RDF content. To access this operations use "GET /objects/URN" request.
-        /// </summary>
-        /// <param name="urn">A URN string that specifies AFF object identity.</param>
-        /// <returns>A string consisting of JSON representation of its RDF content.</returns>
-        [OperationContract]
-        [WebGet(UriTemplate = "/objects/{urn}", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+{
         AfxObject FindObject(string urn);
-
-        [OperationContract]        
-        [WebInvoke(Method="POST", UriTemplate = "/objects", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         bool RegisterObject(AfxObject obj);
-    }
+}
 ```
+
 
 # AFX Objects
 
-Standards attributes of all objects are as following:
+Standard attributes of all objects are as following:
 
 | Property         | Type     | Description                     |
 | ---------------------- | ----------------- | -------------------------------|
 | stored             | URI                 | Link to an object in which the current object is stored. |
 | type               | Text                 | A type of the current object. See known types bellow. |
-| interface          | Text                 | An interface usable to access the current object. See possible interfaces. |
+| interface          | Text                 | An interface supported by the object. |
 | timestamp          | DateTime                 | Timestamp indicating when the object was created. |
 
 
-AFX recognizes the following object types:
+AFX recognizes the following general object types:
 
 | Type Name         | Description                     |
 | -------------------- | -------------------------------|
 | volume  | A volume provides storage container for other data objects. |
-| image  | Image is a type that stores a single read-only forensic data set. |
+| image  | Image is a type that stores a single forensic data set. |
 | map    | Map is type that enables to expose stream interface for data distributed in a different locations. |
-| table  | Table is an object type that represents a database table. |
+| database  | Database is an object type that represents a database storage. |
 | link  | Link is an object type that enables to create aliases. |
 | identity  | Identity is a type of objects that represents verifiable entity by X.509 certificate. |
 
@@ -83,27 +73,43 @@ to objects stored in the container. For Zip container, the access means to use f
 | ---------------------- | ----------------- | -------------------------------|
 | description        | Text                 | Description of the current container. |
 
-
 ## Image Objects
+
+There are three image subtypes:
+
+* BlockImage
+* PageImage
+* AppendImage
 
 | Property         | Type    | Description                     |
 | ---------------------- | ----------------- | -------------------------------|
-| chunkSize         | Integer                 |                                 |
-| chunksPerSegment | Integer                 |                                 |
-| compression        | Text          | Compression method applied to chunks. |
-| size               | Integer                 | Total size of the object if known. |
+| chunkSize          | Integer              |                                 |
+| chunksPerSegment   | Integer              |                                 |
+| compression        | Text                 | Compression method applied to chunks. |
+| size               | Integer              | Total size of the object if known. |
 
 
-## Table Objects
-Table object is designed to provide access to tabular data possibly stored in the database.
-The table thus contains items that represents rows. Table itself have definition of columns.
+
+
+https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/operations-on-blobs
+## Map Objects
+
+## Database Objects
+
 ## Link Objects
-
 
 ## Identity Objects
 
 # Interfaces
 Interface is a mean how a client can access content of AFX Object.
+The defined interfaces are:
+
+* Container - The container interface provides access to the content of various containers.
+* Stream - The Stream interface provides storage for entities, such as binary files and text files.
+* Queue - The Queue interface provides reliable, persistent messaging within and between services.
+* Table - The Table interface provides access to a structured storage in the form of tables.
+* Collection - The Collection interface provides access to a container of JSON documents and associated JavaScript application logic, i.e. stored procedures, triggers and user-defined functions.
+* Document -  The Document interface provides access to user-defined content in JSON format. Documents are stored within collections.
 
 ## Stream
 Stream interface is a basic method of accessing data organized in segments that can be read
@@ -119,7 +125,6 @@ Streams are exposed by StreamService API:
 | POST | /stream/{streamId}/segment/{segmentId} | Writes the segment at the specified position |
 
 StreamService API is defined as IStreamService as follows:
-Stream offers Read operation:
 ```
 interface IStreamService
 {
@@ -129,10 +134,8 @@ interface IStreamService
 }
 ```
 
-Response consists of a chunk map and a binary content of the segment.
-
-### Chunk map
-Chunk map specifies how binary data are organized in chunks. This mapping is important
+A Response consists of a chunk map and a binary content of the segment.
+The chunk map specifies how binary data are organized in chunks. This mapping is important
 as chunks can be compressed. JSON representation contains an array of chunks offsets
 within the segment.
 The following is an example of a segment comprising of four chunks of the same length:
@@ -141,10 +144,6 @@ The following is an example of a segment comprising of four chunks of the same l
     "chunks" : [ 0, 1024, 2048, 3072 ]  
 }
 ```
-
-## Crud
-Another supported interface realizes create, read, update, delete set of operations
-that are typical for database access.
 
 
 # Examples
@@ -155,7 +154,7 @@ This example shows how to read data from the image object ```afx:05d7e827```.
 First we need to localize the container of the image. Thus we ask directory service
 to provide us information on the image object:
 ```
-GET http://directory.tarzan.org:8465/AfxResourceDirectory/objects/05d7e827
+GET http://directory.tarzan.org:8465/afx/resourceDirectory/objects/05d7e827
 
 {
   "id" : "05d7e827",
