@@ -27,11 +27,63 @@ urn:afx:05d7e827
 ```
 While URN is useful for identification of resources, URL provides also localization.
 
+
+## AFX REST API
+Representational State Transfer (REST) APIs are service endpoints that support
+sets of HTTP operations (methods), which provide create/retrieve/update/delete
+access to the service's resources.
+
+A REST API request/response pair can be separated into 5 components:
+
+* The request URI, which consists of: ```{URI-scheme} :// {URI-host} / {resource-path} ? {query-string}```
+* HTTP request message header fields
+* Optional HTTP request message body fields
+* HTTP response message header fields
+* Optional HTTP response message body fields
+
+### Requests
+All requests require to use HTTPS protocol because sensitive information is transmitted.
+Request header must contain the following minimum information:
+* ```Authorization```: OAuth2 bearer token to secure the request
+* ```Content-Type```: specifies the type of the request body, usually set to ```application/json```
+* ```Host```: the domain name or IP address of the host providing requested service
+Request body is optional and consists of data which format depends on the ```Content-Type```.
+Request is sent using HTTP method. Depending on the REST operation the HTTP method
+can be GET, PUT, POST, or DELETE.
+### Responses
+
+
+
+
 # Resource Directory Service
 A resource directory service serves for accessing information about known AFX objects.
 
-The interface of the resource directory service is defined as follows:
+## REST API
+### Find Object
+Find Object operation attempts to find a registered Afx Object in the resource directory.
 
+```
+> GET /afx/resourceDirectory/objects/{id} HTTP/1.1
+> Authorization: Bearer {bearerToken}
+> Host: {directoryHost}
+>
+< HTTP/1.1 200 OK
+< Content-Length: {length}
+< Content-Type: application/json;
+<
+< {afxObject}
+```
+* ```id``` is object id, usually represented using its URN
+* ```bearerToken``` valid token obtained from the authorization service
+* ```directoryHost``` domain name or ip address of a host providing resource directory
+* ```length``` length of the answer body
+* ```afxObject``` Json-LD representation of AfxObject.
+
+### Register Object
+
+
+## Interface
+The interface of the resource directory service is defined as follows:
 ```
 public interface IResourceDirectoryService
 {
@@ -39,6 +91,8 @@ public interface IResourceDirectoryService
         bool RegisterObject(AfxObject obj);
 }
 ```
+
+
 
 
 # AFX Objects
