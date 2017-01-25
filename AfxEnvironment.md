@@ -1,4 +1,4 @@
-# AFX environment
+# AFX REST API
 
 ## 1 Abstract
 AFX is a prototype implementation of distributed forensic data model based on
@@ -67,7 +67,7 @@ A REST API request/response pair can be separated into 5 components:
 * HTTP response message header fields
 * Optional HTTP response message body fields
 
-### Requests
+#### Requests
 All requests require to use HTTPS protocol because sensitive information is transmitted.
 Request header must contain the following minimum information:
 * ```Authorization```: OAuth2 bearer token to secure the request
@@ -88,7 +88,7 @@ OPTIONS | Get information about a request; see below for details.               
 
 <small>Table 1</small>
 
-### Responses
+#### Responses
 If response is successful, then it contains ```200 OK``` code and the following
 fields:
 * ```Content-Length```: defines the length of the message body.
@@ -101,6 +101,20 @@ The most common error codes are:
 * ```404 Not Found``` - The specified resource does not exist.
 * ```405 Method not Allowed``` - The resource doesn't support the specified HTTP verb (GET, PUT, POST, DELETE).
 
+#### New Header Fields
+Considerations for new header fields is described in RFC7231, section 8.3.1.
+While new headers should be avoided there may be cases when a new header definition
+may be suitable. For instance, streams are read by segments, but the segment itself
+consists of chunks. Because chunks can be compressed, a chunk map needs to be retrieved
+with the segment to understand the segment organization.
+The segment itself is sent as binary data (```application/octet-stream```). To
+transfer a chunk map we have several options:
+* Employ an existing header for chunk representation, e.g., ```Content-Range``` (https://tools.ietf.org/html/rfc7233)
+* Send chunk map in a new header, e.g., ```Content-Map```
+* Send chunk map and segment binary data  as ```multipart/mixed```
+* Prepend the segment binary data with an encoded chunk map
+
+
 
 ## Resource Directory Service
 A resource directory service serves for accessing information about known AFX objects.
@@ -109,15 +123,17 @@ A resource directory service serves for accessing information about known AFX ob
 Find Object operation attempts to find a registered Afx Object in the resource directory.
 
 ```http
-> GET /afx/resourceDirectory/objects/{id} HTTP/1.1
-> Authorization: Bearer {bearerToken}
-> Host: {directoryHost}
->
-< HTTP/1.1 200 OK
-< Content-Length: {length}
-< Content-Type: application/json
-<
-< {afxObject}
+GET /afx/resourceDirectory/objects/{id} HTTP/1.1
+Accept: application/json
+Authorization: Bearer {bearerToken}
+Host: {directoryHost}
+
+
+HTTP/1.1 200 OK
+Content-Length: {length}
+Content-Type: application/json
+
+{afxObject}
 ```
 * ```id``` is object id, usually represented using its URN
 * ```bearerToken``` valid token obtained from the authorization service
@@ -221,7 +237,7 @@ Reads information about the stream itself and available segments.
 GET /afx/stream/{id} HTTP/1.1
 Accept: application/json
 Authorization: Bearer {bearerToken}
-Host: {directoryHost}
+Host: {host}
 
 
 HTTP/1.1 200 OK
@@ -232,7 +248,7 @@ Content-Type: application/json
 ```
 * ```id``` is object id that provides the stream interface
 * ```bearerToken``` valid token obtained from the authorization service
-* ```directoryHost``` domain name or ip address of a host providing resource directory
+* ```directoryHost``` domain name or ip address of a host implementing  the service
 * ```length``` length of the answer, i.e., length of afxObject JSON-LD representation.
 * ```afxObject``` Json-LD representation of the stream backing object.
 
@@ -248,7 +264,7 @@ Host: {directoryHost}
 HTTP/1.1 200 OK
 Content-Length: {length}
 Content-Type: application/octet-stream
-x-afx-chunk-map: {chunkMap}
+Content-Map: {chunkMap}
 
 {segmentData}
 ```
@@ -378,7 +394,7 @@ Accept: application/octet-stream
 HTTP/1.1 200 OK
 Content-Length: <SEGMENT-LENGTH>
 Cntent-Type: application/octet-stream
-x-afx-chunk-map: { "chunks": [0, 188, 1034, 1052] }
+Content-Map: { "chunks": [0, 188, 1034, 1052] }
 
 <SEGMENT-BYTES>
 ```
