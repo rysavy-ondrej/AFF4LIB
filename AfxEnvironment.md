@@ -142,17 +142,20 @@ Content-Type: application/json
 * ```afxObject``` Json-LD representation of AfxObject.
 
 ### Register Object
+Object registration inserts a new Afx Object description in to the Resource Directory.
+
+```http
+POST /afx/resourceDirectory/objects HTTP/1.1
+Authorization: Bearer {bearerToken}
+Host: {directoryHost}
+
+{afxObject}
 
 
-## Interface
-The interface of the resource directory service is defined as follows:
+HTTP/1.1 200 OK
+???
 ```
-public interface IResourceDirectoryService
-{
-        AfxObject FindObject(string urn);
-        bool RegisterObject(AfxObject obj);
-}
-```
+
 
 
 
@@ -176,10 +179,13 @@ AFX recognizes the following general object types:
 | volume  | A volume provides storage container for other data objects. |
 | image  | Image is a type that stores a single forensic data set. |
 | map    | Map is type that enables to expose stream interface for data distributed in a different locations. |
-| database  | Database is an object type that represents a database storage. |
+| pcap  | This object represents a packet capture file. |
+| logfile | This object describes a file containing logs. |
+| nfcap | This object represents a file containting flow records and created by nfdump tool. |
 | link  | Link is an object type that enables to create aliases. |
 | identity  | Identity is a type of objects that represents verifiable entity by X.509 certificate. |
 
+Each object type can have either more specific subtypes or attributes that provides addtional information.
 
 ## Volume Objects
 Volumes are containers that host other objects. They also define the low level access
@@ -193,31 +199,53 @@ to objects stored in the container. For Zip container, the access means to use f
 
 There are three image subtypes:
 
-* BlockImage
 * PageImage
-* AppendImage
+* BlockImage
+* SegmentImage
 
-| Property         | Type    | Description                     |
-| ---------------------- | ----------------- | -------------------------------|
-| chunkSize          | Integer              |                                 |
-| chunksPerSegment   | Integer              |                                 |
-| compression        | Text                 | Compression method applied to chunks. |
-| size               | Integer              | Total size of the object if known. |
+### Page Images
+Page Images are a collection of 512-byte pages optimized for random read and write operations.
 
 
+### Block Images
+Block Images are comprised of blocks of data. Blocks do not have to be of the same size.
+Blocks can be up to 32 MB. 
 
+| Property               | Type         | Description                        |
+| ---------------------- | ------------ | -----------------------------------|
+| blockSize              | Integer      | Size of the block.                 |
+| size                   | Integer      | Total size of the object if known. |
 
-https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/operations-on-blobs
+### Segment Image Objects
+Segment Images are comprised of segments that are identified within the image by unique IDs. 
+Each segment is further divided into chunks. Chunks can be compressed to reduce the size of the segment. 
+Splitting the image into segments enables to improve the performance by uploading multiple segments in parallel.
+
+| Property               | Type                 | Description                            |
+| ---------------------- | -------------------- | ---------------------------------------|
+| chunkSize              | Integer              |                                        |
+| chunksPerSegment       | Integer              |                                        |
+| compression            | Text                 | Compression method applied to chunks.  |
+| size                   | Integer              | Total size of the object if known.     |
+
 ## Map Objects
 
-## Database Objects
+## Capture Objects
+
+
+## 
+
+## Nfcap Objects
+| Property         | Type    | Description                     |
+| ---------------------- | ----------------- | -------------------------------|
+| format          | Enum              |  nfdump has four fixed output formats: raw, line, long and extended. |                               |
 
 ## Link Objects
 
 ## Identity Objects
 
 # Interfaces
-Interface is a mean how a client can access content of AFX Object.
+Interface is a mean how a client can access the content of an AFX Object.
 The defined interfaces are:
 
 * Container - The container interface provides access to the content of various containers.
@@ -228,11 +256,24 @@ The defined interfaces are:
 * Document -  The Document interface provides access to user-defined content in JSON format. Documents are stored within collections.
 
 ## Stream
-Stream interface is a basic method of accessing data organized in segments that can be read
-sequential.
+Stream interface is a basic method of accessing data organized in blocks. Data are read and written 
+at the block level. Depending on the underlying object the size of the block varies. 
+
+See also https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/operations-on-blobs
+
+Streams are exposed by StreamService API:
+
+| Operation | URI     | Description                     |
+| ---------------------- | ----------------- | -------------------------------|
+| GET | /stream | List of stream available on the specific host.|
+| GET | /stream/{streamId} | Reads information about the stream itself and available block. |
+| GET | /stream/{streamId}/block/{blockId} | Reads the specified block. |
+| POST | /stream/{streamId}/block/{blockId} | Writes the block at the specified position |
+
 
 ### Get Stream information
 Reads information about the stream itself and available segments.
+
 ```http
 GET /afx/stream/{id} HTTP/1.1
 Accept: application/json
@@ -277,29 +318,24 @@ Content-Map: {chunkMap}
 * ```segmentData``` binary data containing the segment.
 
 ### Stream Write
+```http
+POST | /stream/{streamId}/segment/{segmentId}  HTTP/1.1
+Authorization: Bearer {bearerToken}
+Host: {directoryHost}
+Content-Type: application/octet-stream
+Content-Map: {chunkMap}
 
-
-
-Streams are exposed by StreamService API:
-
-| Operation | URI     | Description                     |
-| ---------------------- | ----------------- | -------------------------------|
-| GET | /stream | List of stream available on the specific host.|
-| GET | /stream/{streamId} | Reads information about the stream itself and available segments. |
-| GET | /stream/{streamId}/segment/{segmentId} | Reads the specified segment. |
-| POST | /stream/{streamId}/segment/{segmentId} | Writes the segment at the specified position |
-
-StreamService API is defined as IStreamService as follows:
+{segmentData}
 ```
-interface IStreamService
-{
-  AfxObject Stream(string streamId);
-  Segment Read(string streamId, long segmentIndex);
-  void Write(string streamId, long segmentIndex, Segment segment);
-}
-```
+* ```streamId``` is object id that provides the stream interface
+* ```segmentId``` is the identification of the segment. Segments are numbered from 0.
+* ```bearerToken``` valid token obtained from the authorization service
+* ```directoryHost``` domain name or ip address of a host providing resource directory
+* ```length``` length of the answer, i.e., length of afxObject JSON-LD representation.
+* ```chunkMap``` json representation of a chunk map. For example: ```{ "chunks" : [ 0, 1024, 2048, 3072 ]  }```
+* ```segmentData``` binary data containing the segment.
 
-A Response consists of a chunk map and a binary content of the segment.
+### Chunk Map
 The chunk map specifies how binary data are organized in chunks. This mapping is important
 as chunks can be compressed. JSON representation contains an array of chunks offsets
 within the segment.
@@ -310,11 +346,11 @@ The following is an example of a segment comprising of four chunks of the same l
 }
 ```
 
-
 # Examples
 Following examples illustrates the way in which different objects can be accessed.
 Json-LD is used for representing schema of the AFX Objects.
-# Access data in Image object
+
+## Access data in Image object
 This example shows how to read data from the image object ```afx:05d7e827```.
 First we need to localize the container of the image. Thus we ask directory service
 to provide us information on the image object:

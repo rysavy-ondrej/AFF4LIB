@@ -1,25 +1,16 @@
-# AFF4LIB
-C# library implementing AFF4 file format
+# Netfox.AFX
+Netfox.AFX is an experimental implementation of a distributed system that manages evidence 
+objects in the style inspired by the AFF4. Netfox.AFX defines an AFX Environment that contains 
+all necessary data and services. 
+The AFX environment is implemented as a collection of services provided through REST API. 
+The specification of the Afx Environment can be found [here](AfxEnvironment.md).
 
-## Basic Concepts
+All projects are implemented in C# though it is possible to provide an alternative implementation in other language.
 
-* Universe
-
-* Object
-
-* Volume - is a storage object that must be able to store mupltiple names segments of data. Current specification proposes two volumes - DirectoryVolume and Zip64Volume. DirectoryVolume stores segments within the single directory. Each segment is represented as a file which name is expressed in URN notation. Zip64Volume stores segments in the Zip archive. 
-
-* Stream - stream represents an interface to access data stored in segments. Streams should provide following set of operations: open, seek, write, read, close. Streams should have size attribute to denote the total size of the stream. Following types of stream were proposed: ImageStream, MapStream, HttpStream, EncryptedStream.
-
-* Segment
-
-* Metadata
-
-* Reference
-
-* Resolver
-
-* Links - while objects have unique names it may be difficult to refer to objast because their identifier is random. Link objects can be used to provide for objects short meaningful names.  
+The implemented services are:
+* Resource Dictionary - a service used for localization of AFX objects.
+* Shell - a client tool for executing operations against the Afx Environment.
+* Data Store - a service that can store data and provide an access to data 
 
 # REFERENCES
 * Michael Cohen, Simson Garfinkel, Bradley Schatz: Extending the advanced forensic format to accommodate multiple data sources, logical evidence, arbitrary information and forensic workflow, Digital Investigation, Volume 6, Supplement, September 2009.
