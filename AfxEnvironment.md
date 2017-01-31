@@ -293,14 +293,17 @@ Splitting the image into segments enables to improve the performance by uploadin
 
 # 6 Interfaces
 Interface is a mean how a client can access the content of an AFX Object.
-The defined interfaces are:
 
-* Container - The container interface provides access to the content of various containers.
-* Stream - The Stream interface provides storage for entities, such as binary files and text files.
-* Queue - The Queue interface provides reliable, persistent messaging within and between services.
-* Table - The Table interface provides access to a structured storage in the form of tables.
-* Collection - The Collection interface provides access to a container of JSON documents and associated JavaScript application logic, i.e. stored procedures, triggers and user-defined functions.
-* Document -  The Document interface provides access to user-defined content in JSON format. Documents are stored within collections.
+
+
+| Interface Name   | Description                                                                                        |
+| ----------- | ---------------------------------------------------------------------------------------------------|
+| Container | The container interface provides access to the content of various containers. |
+| Stream | The Stream interface provides storage for entities, such as binary files and text files. |
+| Queue | The Queue interface provides reliable, persistent messaging within and between services. |
+| Table | The Table interface provides access to a structured storage in the form of tables. |
+| Collection | The Collection interface provides access to a container of JSON documents and associated JavaScript application logic, i.e. stored procedures, triggers and user-defined functions. |
+| Document |  The Document interface provides access to user-defined content in JSON format. Documents are stored within collections. |
 
 ## 6.1 Container Interface
 
@@ -412,14 +415,16 @@ The following is an example of a segment comprising of four chunks of the same l
 Nodes in Afx Environment appear in some defined roles. 
 The following roles are recognized:
 
-* Directory role - a node in directory role provides information about Afx Object through Directory Service interface. 
-                   There may be more than a single node in this role. In this case the directory is distributed.
-* Storage role - a node in storage role provides services for accessing data of various type. It provides one or more 
-                 data access services.                
-* Worker role - a node that performs data manipulation wihtin the Afx Environment. 
-* Producer role - a node that provides external data to the Afx Environment. 
-* Consumer role - a node that consumes data available in the Afx Environment. 
-* Authorization role - a node that provides the authorization service for Afx Environment that supports OAuth 2.0 framework.
+| Role Name   | Description                                                                                        |
+| ----------- | ---------------------------------------------------------------------------------------------------|
+| Directory role | Directory role provides information about Afx Object through Directory Service interface.  
+                   There may be more than a single node in this role. In this case the directory is distributed.   |
+| Storage role | Storage role provides services for accessing data of various type. It provides one or more  
+                 data access services.                     |
+| Worker role | Worker role performs data manipulation wihtin the Afx Environment.  |
+| Producer role | Producer role provides access to external data to the Afx Environment.  |
+| Consumer role | Consumer role uses data available in the Afx Environment.  |
+| Authorization role | Authorization role provides the authorization service for Afx Environment that supports OAuth 2.0 framework. |
 
 # 8 Examples
 Following examples illustrate the way in which different objects can be accessed.
