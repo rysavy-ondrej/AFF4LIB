@@ -347,7 +347,7 @@ Content-Type: application/json
 * ```afxObject``` Json-LD representation of the stream backing object.
 
 ### Stream Read
-Reads a single segment from the specified stream.
+Reads a single block from the specified stream.
 ```http
 GET /afx/stream/{streamId}/segment/{segmentId} HTTP/1.1
 Accept: application/octet-stream
@@ -360,33 +360,35 @@ Content-Length: {length}
 Content-Type: application/octet-stream
 Content-Map: {chunkMap}
 
-{segmentData}
+{data}
 ```
 * ```streamId``` is object id that provides the stream interface
-* ```segmentId``` is the identification of the segment. Segments are numbered from 0.
+* ```blockId``` is the identification of the block. Blocks are numbered from 0.
 * ```bearerToken``` valid token obtained from the authorization service
 * ```directoryHost``` domain name or ip address of a host providing resource directory
 * ```length``` length of the answer, i.e., length of afxObject JSON-LD representation.
 * ```chunkMap``` json representation of a chunk map. For example: ```{ "chunks" : [ 0, 1024, 2048, 3072 ]  }```
-* ```segmentData``` binary data containing the segment.
+* ```data``` binary data of the block.
 
 ### Stream Write
+Writes a single block to the specified stream. 
+
 ```http
-POST | /stream/{streamId}/segment/{segmentId}  HTTP/1.1
+POST | /stream/{streamId}/block/{blockId}  HTTP/1.1
 Authorization: Bearer {bearerToken}
 Host: {directoryHost}
 Content-Type: application/octet-stream
 Content-Map: {chunkMap}
 
-{segmentData}
+{data}
 ```
 * ```streamId``` is object id that provides the stream interface
-* ```segmentId``` is the identification of the segment. Segments are numbered from 0.
+* ```blockId``` is the identification of the block. Block are numbered from 0.
 * ```bearerToken``` valid token obtained from the authorization service
 * ```directoryHost``` domain name or ip address of a host providing resource directory
 * ```length``` length of the answer, i.e., length of afxObject JSON-LD representation.
 * ```chunkMap``` json representation of a chunk map. For example: ```{ "chunks" : [ 0, 1024, 2048, 3072 ]  }```
-* ```segmentData``` binary data containing the segment.
+* ```data``` binary data of the block.
 
 ### Chunk Map
 The chunk map specifies how binary data are organized in chunks. This mapping is important
@@ -446,7 +448,7 @@ Content-Type: application/json
 
 {
   "id" : "05d7e827",
-  "type" : "image",
+  "type" : "segmentImage",
   "interface" : "stream",
   "chunkSize" : 2048,
   "chunksPerSegment" : 16,
@@ -492,7 +494,7 @@ Cntent-Type: application/json
 
 {
   "id" : "05d7e827",
-  "type" : "image",
+  "type" : "segmentImage",
   "interface" : "stream",
   "chunkSize" : 2048,
   "chunksPerSegment" : 16,
@@ -510,7 +512,7 @@ the object.
 To read the third segment the following GET command is issued:
 
 ```http
-GET http://tx01.tarzan.org:8465/afx/stream/05d7e827/segment/2 HTTTP/1.1
+GET http://tx01.tarzan.org:8465/afx/stream/05d7e827/block/2 HTTTP/1.1
 Accept: application/octet-stream
 
 
