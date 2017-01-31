@@ -349,7 +349,7 @@ Content-Type: application/json
 ### Stream Read
 Reads a single block from the specified stream.
 ```http
-GET /afx/stream/{streamId}/segment/{segmentId} HTTP/1.1
+GET /afx/stream/{streamId}/block/{blockId} HTTP/1.1
 Accept: application/octet-stream
 Authorization: Bearer {bearerToken}
 Host: {directoryHost}
@@ -374,7 +374,7 @@ Content-Map: {chunkMap}
 Writes a single block to the specified stream. 
 
 ```http
-POST | /stream/{streamId}/block/{blockId}  HTTP/1.1
+POST /stream/{streamId}/block/{blockId}  HTTP/1.1
 Authorization: Bearer {bearerToken}
 Host: {directoryHost}
 Content-Type: application/octet-stream
