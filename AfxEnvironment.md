@@ -312,9 +312,7 @@ Interface is a mean how a client can access the content of an AFX Object.
 Stream interface is a basic method of accessing data organized in blocks. Data are read and written 
 at the block level. Depending on the underlying object the size of the block varies. 
 
-See also https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/operations-on-blobs
-
-Streams are exposed by StreamService API:
+Streams are accessed by the following operations:
 
 | Operation | URI     | Description                     |
 | ---------------------- | ----------------- | -------------------------------|
@@ -536,6 +534,8 @@ the segment content.
 
 # References
 
-* ODATA https://github.com/DevExpress/EF-Core-Security/wiki/How-to-create-a-client-Console-Application-for-the-OData-server-with-the-EF-Core-Security
+* [How to create a client Console Application for the OData server with the EF Core Security](https://github.com/DevExpress/EF-Core-Security/wiki/How-to-create-a-client-Console-Application-for-the-OData-server-with-the-EF-Core-Security)
 
-* DFXML http://www.forensicswiki.org/wiki/Digital_Forensics_XML_Schema
+* [Dgitial Forensics XML Schema](http://www.forensicswiki.org/wiki/Digital_Forensics_XML_Schema)
+
+* [Microsoft Azure: Operations on Blobs](https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/operations-on-blobs)
